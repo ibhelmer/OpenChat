@@ -55,7 +55,7 @@ class Client:
     def receive(self):
         while self.running:
             try:
-                message=self.sock.recv(1024)
+                if message == 'NICK':
                 if message == 'NICK':
                     self.sock.send(self.nickname.encode('utf-8'))
                 else:

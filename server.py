@@ -32,9 +32,9 @@ def receive():
     while True:
         client, address = server.accept()
         print(f"Connected with {str(address)} !")
-        client.send("NICK".encode('uft-8'))
+        client.send("NICK".encode('utf-8'))
         nickname = client.recv(1024)
-        nickmanes.append(nickname)
+        nicknames.append(nickname)
         clients.append(client)
         print(f"Nickname of the client is {nickname}")
         broadcast(f"{nickname} connected to server !".encode('utf-8'))
