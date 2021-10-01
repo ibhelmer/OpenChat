@@ -1,6 +1,7 @@
 import socket
 import threading
 import tkinter
+import tkinter.scrolledtext
 from tkinter import simpledialog
 HOST = '127.0.0.1'
 PORT = 7913
@@ -24,7 +25,7 @@ class Client:
         self.chat_label = tkinter.Label(self.win, text="Chat:", bg="lightgray")
         self.chat_label.config(font=("Arial",12))
         self.chat_label.pack(padx=20, pady=5)
-        self.text_area =tkinter.scrolledtext.Scrolled
+        self.text_area = tkinter.scrolledtext.ScrolledText(self.win)
         self.text_area.pack(padx=20, pady=5)
         self.text_area.config(state='disabled')
         self.msg_label = tkinter.Label(self.win, text="Message:", bg="lightgray")

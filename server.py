@@ -41,6 +41,7 @@ def receive():
         client.send("Connected to the server".encode('utf-8'))
         thread= threading.Thread(target=handle, args = (client,))
         thread.start()
-    print("Server running ...")
+
+print("Server running ...")
 receive()
 
