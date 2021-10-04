@@ -1,21 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Project : OpenChat
+File    : Clienet.py
+Author  : Ib Helmer Nielsen
+Version : 0.1.0
+Email   : ihn@ucn.dk
+Status  : Prove of concept
+License : MPL 2.0
+Description: Simpel chat system. The communication is unencrypted and based on tcp.
+             The client have a graphic user interface, where message to the chat can be entered and send and a part
+             that shows messages from other users. When a client login to the system a dialog box will ask for
+             nickname of user.
+"""
 import socket
 import threading
 import tkinter
 import tkinter.scrolledtext
 from tkinter import simpledialog
 
+# Ip address of server
 HOST = '127.0.0.1'
+# Port on server used for chat client connections
 PORT = 7913
 
 class Client:
     def __init__(self, host, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host,port))
+
         msg = tkinter.Tk()
         msg.withdraw()
         self.nickname = simpledialog.askstring("Nickname", "Please chose a nickname", parent=msg)
         self.gui_done = False
         self.running =True
+
         gui_thread = threading.Thread(target=self.gui_loop)
         receive_thread = threading.Thread(target=self.receive)
         gui_thread.start()
