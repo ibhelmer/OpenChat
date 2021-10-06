@@ -15,14 +15,26 @@ Description: Simpel chat system. The communication is unencrypted and based on t
 # Imports
 import socket
 import threading
+from time import sleep
 
 # Ip address and port used by server
+## Only local host
 HOST = '127.0.0.1'
+# Use what ever ip on the server
+#HOST = '0.0.0.0'
+# Port on server used for chat client connections
 PORT = 7913
+
 # Make server socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Bind address and port to server
 server.bind(((HOST, PORT)))
+
+# Printout the ip of the server
+host_name = socket.gethostname()
+ip = socket.gethostbyname(host_name)
+print("The servers ip address : ", ip)
+
 # Listen
 server.listen()
 
@@ -30,10 +42,12 @@ server.listen()
 clients = []
 # List of nicknames
 nicknames = []
+
 # Broadcast message to all active clients
 def broadcast(message):
     for client in clients:
         client.send(message)
+
 # Handler for the connection, read data from client and broadcast to all client
 def handle(client):
     while True:
@@ -48,6 +62,7 @@ def handle(client):
             nickname = nicknames[index]
             nicknames.remove(nickname)
             break
+
 # Accept incomming connection and make a thread for new connections
 def receive():
     while True:
@@ -57,9 +72,11 @@ def receive():
         nickname = client.recv(1024)
         nicknames.append(nickname)
         clients.append(client)
-        print(f"Nickname of the client is {nickname}")
-        broadcast(f"{nickname} connected to server !".encode('utf-8'))
-        client.send("Connected to the server".encode('utf-8'))
+        print(f"Nickname of the client is", nickname.decode(),f"\n")
+        sleep(0.5)          # Wait for clients GUI to startup
+        message = nickname.decode() + f" connected to server !\n"
+        broadcast(message.encode('utf-8'))
+        client.send("Connected to the server\n".encode('utf-8'))
         thread= threading.Thread(target=handle, args = (client,))
         thread.start()
 

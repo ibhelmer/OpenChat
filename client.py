@@ -8,7 +8,7 @@ Version : 0.1.0
 Email   : ihn@ucn.dk
 Status  : Prove of concept
 License : MPL 2.0
-Description: Simpel chat system. The communication is unencrypted and based on tcp.
+Description: Simpel chat. The communication is unencrypted and based on tcp.
              The client have a graphic user interface, where message to the chat can be entered and send and a part
              that shows messages from other users. When a client login to the system a dialog box will ask for
              nickname of user.
@@ -20,21 +20,27 @@ import tkinter.scrolledtext
 from tkinter import simpledialog
 
 # Ip address of server
-HOST = '127.0.0.1'
+## Change this to the servers ip address !!!
+HOST = '127.0.0.1'  # Local loopback address
+#HOST = '192.168.2.170'
 # Port on server used for chat client connections
 PORT = 7913
 
 class Client:
     def __init__(self, host, port):
+        # Connect socket object to server
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host,port))
 
+        # This dialog for entering nickname
         msg = tkinter.Tk()
         msg.withdraw()
+
         self.nickname = simpledialog.askstring("Nickname", "Please chose a nickname", parent=msg)
         self.gui_done = False
         self.running =True
 
+        # Start Gui thread and recieve thread
         gui_thread = threading.Thread(target=self.gui_loop)
         receive_thread = threading.Thread(target=self.receive)
         gui_thread.start()
@@ -43,6 +49,7 @@ class Client:
     def gui_loop(self):
         self.win =tkinter.Tk()
         self.win.configure(bg="lightgray")
+        self.win.title("Chat client")
 
         self.chat_label = tkinter.Label(self.win, text="Chat:", bg="lightgray")
         self.chat_label.config(font=("Arial",12))
@@ -83,7 +90,7 @@ class Client:
         while self.running:
             try:
                 message = self.sock.recv(1024)
-                if message == 'NICK':
+                if message == b'NICK':
                     self.sock.send(self.nickname.encode('utf-8'))
                 else:
                     if self.gui_done:
@@ -98,5 +105,6 @@ class Client:
                 self.sock.close()
                 break
 
+# Two clint is instantiated so chat between them can be seen
 client1 = Client(HOST,PORT)
 client2 = Client(HOST,PORT)
